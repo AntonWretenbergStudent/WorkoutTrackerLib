@@ -1,6 +1,5 @@
-// examples/test.js
 import { WorkoutTracker } from "../src/WorkoutTracker.js";
-import { fmtMinutes, fmtPace } from "../src//time.js";
+import { fmtMinutes, fmtPace } from "../src/time.js";
 import { paceMinPerKm, speedKmH, epley1RM, setVolumeKg, durationMinFrom } from "../src/metrics.js";
 const wt = new WorkoutTracker();
 wt.addWorkout({ id: "w1", date: "2025-09-23", type: "endurance" });
