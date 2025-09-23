@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "node examples/cli.js",
-    "test": "node examples/cli.js"
+    "start": "node examples/test.js",
+    "test": "node examples/test.js"
   },
   "keywords": ["workout", "fitness", "tracker", "library"],
   "author": "Anton Wretenberg",

@@ -6,7 +6,7 @@ wt.addWorkout({ id: "w1", date: "2025-09-23", type: "endurance" });
 
 wt.addEnduranceSet("w1", "Easy Run", { distanceKm: 5, minutes: 28, seconds: 60 });
 
-const durationMin = durationMinFrom({ minutes: 28, seconds: 60 });
+const durationMin = durationMinFrom({ minutes: 90, seconds: 43 });
 
 const pace = paceMinPerKm({ distanceKm: 5, durationMin });
 const speed = speedKmH({ distanceKm: 5, durationMin });

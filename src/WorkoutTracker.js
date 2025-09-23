@@ -96,6 +96,75 @@ export class WorkoutTracker {
     };
   }
 
+    // ---- weekly summary
+  weeklySummary(isoWeekStart) {
+    let totalStrengthVolumeKg = 0;
+    let totalDistanceKm = 0;
+    let totalDurationMin = 0;
+    const workoutIds = [];
+
+    for (const workout of this.#workouts.values()) {
+      if (!isWithinWeek(workout.date, isoWeekStart)) continue;
+
+      workoutIds.push(workout.id);
+      const stats = this.workoutStats(workout.id);
+
+      totalStrengthVolumeKg += stats.strengthVolumeKg;
+      if (stats.endurance) {
+        totalDistanceKm += stats.endurance.distanceKm;
+        totalDurationMin += stats.endurance.durationMin;
+      }
+    }
+
+    const hasEndurance = totalDistanceKm > 0;
+    const endurance = hasEndurance
+      ? {
+          distanceKm: round2(totalDistanceKm),
+          durationMin: round1(totalDurationMin),
+          paceMinPerKm: totalDurationMin / totalDistanceKm,
+        }
+      : null;
+
+    return {
+      weekStart: isoWeekStart,
+      workouts: workoutIds,
+      strengthVolumeKg: totalStrengthVolumeKg,
+      endurance,
+    };
+  }
+
+  // ---- personal records
+  personalRecords() {
+    const best = new Map();
+
+    for (const workout of this.#workouts.values()) {
+      for (const exercise of workout.exercises) {
+        for (const set of exercise.sets) {
+          if (set.kind !== "strength") continue;
+          const est = epley1RM(set);
+          if (est > (best.get(exercise.name) ?? 0)) best.set(exercise.name, est);
+        }
+      }
+    }
+
+    return [...best.entries()]
+      .map(([exercise, oneRM]) => ({ exercise, oneRM: round1(oneRM) }))
+      .sort((a, b) => a.exercise.localeCompare(b.exercise));
+  }
+
+  // ---- streak
+  streak(untilDateIso) {
+    const workoutDates = new Set([...this.#workouts.values()].map((w) => w.date));
+    let cursor = new Date(untilDateIso);
+    let count = 0;
+
+    while (workoutDates.has(cursor.toISOString().slice(0, 10))) {
+      count++;
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return count;
+  }
+
   #getWorkout(id) {
     const workout = this.#workouts.get(id);
     if (!workout) throw new Error("Workout not found");
