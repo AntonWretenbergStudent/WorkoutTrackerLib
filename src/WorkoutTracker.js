@@ -1,5 +1,5 @@
 import { Workout, Exercise, StrengthSet, EnduranceSet } from "./models.js";
-import { setVolumeKg, epley1RM, paceMinPerKm, speedKmH } from "./metrics.js";
+import { durationMinFrom } from "./metrics.js";
 import { isWithinWeek } from "./time.js";
 
 export class WorkoutTracker {
@@ -17,23 +17,21 @@ export class WorkoutTracker {
     }
   }
 
-  addEnduranceSet(workoutId, exerciseName, { distanceKm, durationMin }) {
-    const exercise = this.#getOrCreateExercise(workoutId, exerciseName)
-    exercise.sets.push(new EnduranceSet({ distanceKm, durationMin }))
+  addEnduranceSet(workoutId, exerciseName, { distanceKm, minutes, seconds }) {
+    const exercise = this.#getOrCreateExercise(workoutId, exerciseName);
+    const durationMin = durationMinFrom({ minutes, seconds });
+    exercise.sets.push(new EnduranceSet({ distanceKm, durationMin }));
   }
 
-  // Stats per workout
-
-  
-
- #getWorkout(id) {
+  #getWorkout(id) {
     const workout = this.#workouts.get(id);
     if (!workout) throw new Error("Workout not found");
     return workout;
   }
+
   #getOrCreateExercise(workoutId, name) {
     const workout = this.#getWorkout(workoutId);
-    let exercise = workout.exercises.find(e => e.name === name);
+    let exercise = workout.exercises.find((e) => e.name === name);
     if (!exercise) {
       exercise = new Exercise(name);
       workout.exercises.push(exercise);

@@ -26,6 +26,9 @@ export class EnduranceSet {
   constructor({ distanceKm, durationMin }) {
     this.kind = "endurance";
     this.distanceKm = distanceKm;
+    if (!Number.isFinite(durationMin) || durationMin < 0) {
+      throw new Error("EnduranceSet requires a non-negative durationMin.");
+    }
     this.durationMin = durationMin;
   }
 }
