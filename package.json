@@ -6,9 +6,19 @@
   "type": "module",
   "scripts": {
     "start": "node examples/test.js",
-    "test": "node examples/test.js"
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
+    "test:watch": "npm test -- --watch",
+    "test:cov": "npm test -- --coverage"
   },
-  "keywords": ["workout", "fitness", "tracker", "library"],
+  "keywords": [
+    "workout",
+    "fitness",
+    "tracker",
+    "library"
+  ],
   "author": "Anton Wretenberg",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }

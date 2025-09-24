@@ -8,10 +8,14 @@ export function epley1RM({ weightKg, reps }) {
 }
 
 export function paceMinPerKm({ distanceKm, durationMin }) {
+  if (!Number.isFinite(distanceKm) || distanceKm <= 0) return 0;
+  if (!Number.isFinite(durationMin) || durationMin <= 0) return 0;
   return durationMin / distanceKm;
 }
 
 export function speedKmH({ distanceKm, durationMin }) {
+  if (!Number.isFinite(distanceKm) || distanceKm <= 0) return 0;
+  if (!Number.isFinite(durationMin) || durationMin <= 0) return 0;
   return (distanceKm / durationMin) * 60;
 }
 
