@@ -8,7 +8,12 @@ import {
 } from "./metrics.js";
 import { isWithinWeek, fmtMinutes, fmtPace } from "./time.js";
 
-// A little round fuction
+/**
+ * Small helper to round numbers.
+ * @param {number} x - The number to round.
+ * @param {number} [decimals=0] - Number of decimals to keep.
+ * @returns {number} Rounded number.
+ */
 function round(x, decimals = 0) {
   const f = 10 ** decimals;
   return Math.round((Number(x) || 0) * f) / f;
@@ -17,32 +22,68 @@ function round(x, decimals = 0) {
 export class WorkoutTracker {
   #workouts = new Map(); // id -> Workout
 
+  /**
+   * Add a new workout.
+   * @param {{id: string, date: string, type: string}} param0
+   * @throws {Error} If workout id already exists.
+   */
   addWorkout({ id, date, type }) {
     if (this.#workouts.has(id)) throw new Error("Duplicate workout id");
+    if (!id || typeof id !== "string") throw new Error("Workout id must be a string");
+    if (!date || typeof date !== "string") throw new Error("Workout date must be an ISO string");
+    if (!type || typeof type !== "string") throw new Error("Workout type must be a string");
+
     this.#workouts.set(id, new Workout({ id, date, type }));
   }
 
+  /**
+   * Add an exercise to an existing workout.
+   * @param {string} workoutId
+   * @param {string} name - Name of the exercise
+   */
   addExercise(workoutId, name) {
+    if (!name || !name.trim()) throw new Error("Exercise name is required");
     const workout = this.#getWorkout(workoutId);
-    if (!workout.exercises.some((e) => e.name === name.trim())) {
-      workout.exercises.push(new Exercise(name.trim()));
+    const cleanName = name.trim();
+    if (!workout.exercises.some((e) => e.name === cleanName)) {
+      workout.exercises.push(new Exercise(cleanName));
     }
   }
 
+  /**
+   * Add a strength set to an exercise.
+   * @param {string} workoutId
+   * @param {string} exerciseName
+   * @param {{reps:number, weightKg:number}} param2
+   */
   addStrengthSet(workoutId, exerciseName, { reps, weightKg }) {
+    if (!Number.isFinite(reps) || reps <= 0) throw new Error("Reps must be > 0");
+    if (!Number.isFinite(weightKg) || weightKg <= 0) throw new Error("Weight must be > 0");
+
     const exercise = this.#getOrCreateExercise(workoutId, exerciseName);
     exercise.sets.push(new StrengthSet({ reps, weightKg }));
   }
 
+  /**
+   * Add an endurance set to an exercise.
+   * @param {string} workoutId
+   * @param {string} exerciseName
+   * @param {{distanceKm:number, minutes:number, seconds:number}} param2
+   */
   addEnduranceSet(workoutId, exerciseName, { distanceKm, minutes, seconds }) {
+    if (!Number.isFinite(distanceKm) || distanceKm <= 0) {
+      throw new Error("Distance must be > 0");
+    }
+
     const exercise = this.#getOrCreateExercise(workoutId, exerciseName);
     const durationMin = durationMinFrom({ minutes, seconds });
     exercise.sets.push(new EnduranceSet({ distanceKm, durationMin }));
   }
 
+  // --- Internal helpers (private) ---
+
   #buildEnduranceNumeric({ distanceKm, durationMin }) {
-    const hasData = distanceKm > 0 && durationMin > 0;
-    if (!hasData) return null;
+    if (distanceKm <= 0 || durationMin <= 0) return null;
 
     const pace = paceMinPerKm({ distanceKm, durationMin });
     const speed = speedKmH({ distanceKm, durationMin });
@@ -65,6 +106,13 @@ export class WorkoutTracker {
     };
   }
 
+  // --- Public queries ---
+
+  /**
+   * Get stats for one workout (strength volume, endurance totals, details).
+   * @param {string} workoutId
+   * @returns {object}
+   */
   workoutStats(workoutId) {
     const workout = this.#getWorkout(workoutId);
 
@@ -74,15 +122,19 @@ export class WorkoutTracker {
     const details = [];
 
     for (const exercise of workout.exercises) {
-      // Styrka
       let volumeKg = 0;
       let best1RM = 0;
+
       for (const set of exercise.sets) {
         if (set.kind === "strength") {
           volumeKg += setVolumeKg(set);
           best1RM = Math.max(best1RM, epley1RM(set));
+        } else if (set.kind === "endurance") {
+          totalEnduranceDistanceKm += set.distanceKm;
+          totalEnduranceDurationMin += set.durationMin;
         }
       }
+
       if (volumeKg > 0) {
         totalStrengthVolumeKg += volumeKg;
         details.push({
@@ -91,13 +143,6 @@ export class WorkoutTracker {
           best1RM: round(best1RM, 1),
         });
       }
-
-      for (const set of exercise.sets) {
-        if (set.kind === "endurance") {
-          totalEnduranceDistanceKm += set.distanceKm;
-          totalEnduranceDurationMin += set.durationMin;
-        }
-      }
     }
 
     const enduranceNumeric = this.#buildEnduranceNumeric({
@@ -105,19 +150,22 @@ export class WorkoutTracker {
       durationMin: totalEnduranceDurationMin,
     });
 
-    const enduranceFmt = this.#formatEndurance(enduranceNumeric);
-
     return {
       id: workout.id,
       date: workout.date,
       type: workout.type,
       strengthVolumeKg: totalStrengthVolumeKg,
       endurance: enduranceNumeric,
-      enduranceFmt,
+      enduranceFmt: this.#formatEndurance(enduranceNumeric),
       details,
     };
   }
 
+  /**
+   * Get summary stats for one week.
+   * @param {string} isoWeekStart - Monday of the week (YYYY-MM-DD)
+   * @returns {object}
+   */
   weeklySummary(isoWeekStart) {
     let totalStrengthVolumeKg = 0;
     let totalDistanceKm = 0;
@@ -129,8 +177,8 @@ export class WorkoutTracker {
 
       workoutIds.push(workout.id);
       const stats = this.workoutStats(workout.id);
-
       totalStrengthVolumeKg += stats.strengthVolumeKg;
+
       if (stats.endurance) {
         totalDistanceKm += stats.endurance.distanceKm;
         totalDurationMin += stats.endurance.durationMin;
@@ -141,26 +189,31 @@ export class WorkoutTracker {
       distanceKm: totalDistanceKm,
       durationMin: totalDurationMin,
     });
-    const enduranceFmt = this.#formatEndurance(enduranceNumeric);
 
     return {
       weekStart: isoWeekStart,
       workouts: workoutIds,
       strengthVolumeKg: totalStrengthVolumeKg,
       endurance: enduranceNumeric,
-      enduranceFmt,
+      enduranceFmt: this.#formatEndurance(enduranceNumeric),
     };
   }
 
+  /**
+   * Get best estimated 1RM per exercise across all workouts.
+   * @returns {Array<{exercise:string, oneRM:number}>}
+   */
   personalRecords() {
-    const best = new Map(); // exerciseName -> oneRM
+    const best = new Map();
 
     for (const workout of this.#workouts.values()) {
       for (const exercise of workout.exercises) {
         for (const set of exercise.sets) {
           if (set.kind !== "strength") continue;
           const est = epley1RM(set);
-          if (est > (best.get(exercise.name) ?? 0)) best.set(exercise.name, est);
+          if (est > (best.get(exercise.name) ?? 0)) {
+            best.set(exercise.name, est);
+          }
         }
       }
     }
@@ -170,10 +223,13 @@ export class WorkoutTracker {
       .sort((a, b) => a.exercise.localeCompare(b.exercise));
   }
 
+  /**
+   * Count consecutive workout days ending at given date.
+   * @param {string} untilDateIso - ISO date (YYYY-MM-DD)
+   * @returns {number}
+   */
   streak(untilDateIso) {
-    const workoutDates = new Set(
-      [...this.#workouts.values()].map((w) => w.date)
-    );
+    const workoutDates = new Set([...this.#workouts.values()].map((w) => w.date));
     let cursor = new Date(untilDateIso);
     let count = 0;
 
@@ -184,6 +240,11 @@ export class WorkoutTracker {
     return count;
   }
 
+  /**
+   * Render a text summary of a workout.
+   * @param {string} workoutId
+   * @returns {string}
+   */
   displayWorkout(workoutId) {
     const workout = this.#getWorkout(workoutId);
     const lines = [`Workout ${workout.id} (${workout.date}) [${workout.type}]`];
@@ -196,10 +257,7 @@ export class WorkoutTracker {
         } else {
           const niceTime = fmtMinutes(set.durationMin);
           const pace = fmtPace(
-            paceMinPerKm({
-              distanceKm: set.distanceKm,
-              durationMin: set.durationMin,
-            })
+            paceMinPerKm({ distanceKm: set.distanceKm, durationMin: set.durationMin })
           );
           lines.push(`    ${set.distanceKm} km in ${niceTime} (${pace})`);
         }
@@ -208,7 +266,8 @@ export class WorkoutTracker {
     return lines.join("\n");
   }
 
-  // ---- internals
+  // --- Private helpers ---
+
   #getWorkout(id) {
     const workout = this.#workouts.get(id);
     if (!workout) throw new Error("Workout not found");
@@ -216,6 +275,7 @@ export class WorkoutTracker {
   }
 
   #getOrCreateExercise(workoutId, name) {
+    if (!name || !name.trim()) throw new Error("Exercise name is required");
     const workout = this.#getWorkout(workoutId);
     let exercise = workout.exercises.find((e) => e.name === name.trim());
     if (!exercise) {
