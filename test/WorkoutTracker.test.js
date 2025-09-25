@@ -1,4 +1,4 @@
-import { WorkoutTracker } from "../src/WorkoutTracker.js";
+import { WorkoutTracker } from "../src/index.js"; 
 
 describe("WorkoutTracker", () => {
   test("can add a workout and read back stats", () => {

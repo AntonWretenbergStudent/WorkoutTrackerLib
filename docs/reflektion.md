@@ -54,7 +54,7 @@ for (const set of exercise.sets) {
 }
 ```
 
-**Why:** One pass is simpler and avoids duplication. This supports *Clean Code* ch.3 — functions should “do one thing” and not repeat work.
+**Why:** One pass is simpler and avoids duplication. This supports *Clean Code* chapter 3 — functions should “do one thing” and not repeat work.
 
 ---
 

@@ -1,5 +1,4 @@
-// test.js
-import { WorkoutTracker } from "../src/WorkoutTracker.js";
+import { WorkoutTracker } from "../src/index.js"; 
 
 const wt = new WorkoutTracker();
 
