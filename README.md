@@ -82,15 +82,16 @@ Output:
 
 ## 🧪 Development & Testing
 
-Manual tests: Run the demo app
+If you want to explore or contribute to the library locally:
+
+1. Clone the repository  
+2. Install dependencies  
+3. Run tests
 
 ```bash
-node examples/demo.js
-```
-
-Automated tests (Jest):
-
-```bash
+git clone https://github.com/WretenbergAnton/WorkoutTrackerLib.git
+cd WorkoutTrackerLib
+npm install
 npm test
 ```
 
