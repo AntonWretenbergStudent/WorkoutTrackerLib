@@ -1,11 +1,13 @@
-# WorkoutTrackerLib
+# 🏋 WorkoutTrackerLib
 
-A small JavaScript library for tracking strength and endurance workouts.  
-The module lets developers add workouts, log sets, and calculate stats such as volume, pace, and personal records.  
-This project is a **library** for developers to use in their own apps — it is not a finished workout app for end users.
+A small **JavaScript library** for tracking strength and endurance workouts.  
+This module lets developers add workouts, log sets, and calculate stats such as **total volume**, **pace**, and **personal records (1RM)**.
+
+> 🧩 **Note:** This is a *developer library* — meant to be imported into your own app, not a full workout tracker UI.
+
 ---
 
-## Features
+## 🌟 Features
 
 - Add workouts with exercises and sets (strength & endurance).
 - Compute workout stats (strength volume, endurance totals, best 1RM).
@@ -16,16 +18,21 @@ This project is a **library** for developers to use in their own apps — it is 
 
 ---
 
-## Installation
+## 📦 Installation
 
-Clone the repository:
-
+Install directly from npm:
 ```bash
-git clone git@github.com:WretenbergAnton/WorkoutTrackerLib.git
-cd WorkoutTrackerLib
+npm install workouttrackerlib
 ```
+Or with yarn:
+```bash
+npm install workouttrackerlib
+```
+Your project must be using ES Modules - either name your file **.mjs** or add **"type": "module"** to your **package.json**.
 
-## Usage Example
+---
+
+## 🚀 Usage Example
 
 ```js
 import { WorkoutTracker } from "workouttrackerlib";
@@ -41,7 +48,9 @@ wt.addStrengthSet("w1", "Bench Press", { reps: 5, weightKg: 80 });
 
 // Get stats
 console.log(wt.workoutStats("w1"));
-/*
+```
+Output:
+```js
 {
   id: "w1",
   date: "2025-09-20",
@@ -52,24 +61,26 @@ console.log(wt.workoutStats("w1"));
     { exercise: "Bench Press", volumeKg: 400, best1RM: 93.3 }
   ]
 }
-*/
 ```
 
-## API Overview
+## 🧠 API Overview
 
-### Class: WorkoutTracker
+### Class: `WorkoutTracker`
 
-- `addWorkout({ id, date, type })` → Add a new workout.
-- `addExercise(workoutId, name)` → Add exercise to workout.
-- `addStrengthSet(workoutId, exerciseName, { reps, weightKg })` → Log a strength set.
-- `addEnduranceSet(workoutId, exerciseName, { distanceKm, minutes, seconds })` → Log an endurance set.
-- `workoutStats(workoutId)` → Get stats for one workout.
-- `weeklySummary(isoWeekStart)` → Get aggregated stats for a week.
-- `personalRecords()` → Get best estimated 1RM per exercise.
-- `streak(untilDateIso)` → Count consecutive workout days.
-- `displayWorkout(workoutId)` → Get a readable text summary.
+| Method | Description |
+|--------|--------------|
+| `addWorkout({ id, date, type })` | Add a new workout |
+| `addExercise(workoutId, name)` | Add an exercise to a workout |
+| `addStrengthSet(workoutId, exerciseName, { reps, weightKg })` | Log a strength set |
+| `addEnduranceSet(workoutId, exerciseName, { distanceKm, minutes, seconds })` | Log an endurance set |
+| `workoutStats(workoutId)` | Get detailed stats for one workout |
+| `weeklySummary(isoWeekStart)` | Get aggregated stats per week |
+| `personalRecords()` | Get best estimated 1RM per exercise |
+| `streak(untilDateIso)` | Count consecutive workout days |
+| `displayWorkout(workoutId)` | Get a formatted text summary |
 
-## Development & Testing
+
+## 🧪 Development & Testing
 
 Manual tests: Run the demo app
 
@@ -85,11 +96,11 @@ npm test
 
 See `testrapport.md` for detailed test report.
 
-## Documentation
+## 📚 Documentation
 
 - `reflektion.md`: Reflections on Clean Code (chapters 2 & 3).
 - `testrapport.md`: Test strategy and results.
 
-## License
+## 📜 License
 
-MIT License
+MIT License © 2025 [Anton Wretenberg](https://github.com/WretenbergAnton)

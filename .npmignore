@@ -1,0 +1,8 @@
+# Filer/mappar som inte ska publiceras
+node_modules
+test
+examples
+docs
+jest.config.cjs
+package-lock.json
+.gitignore

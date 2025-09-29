@@ -4,8 +4,16 @@
   "description": "A simple JavaScript library to track workouts (strength & endurance).",
   "main": "src/index.js",
   "type": "module",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./src/index.js"
+  },
   "scripts": {
-    "start": "node examples/test.js",
+    "start": "node examples/demo.js",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
     "test:watch": "npm test -- --watch",
     "test:cov": "npm test -- --coverage"
@@ -18,6 +26,11 @@
   ],
   "author": "Anton Wretenberg",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WretenbergAnton/WorkoutTrackerLib.git"
+  },
+  "homepage": "https://github.com/WretenbergAnton/WorkoutTrackerLib#readme",
   "devDependencies": {
     "jest": "^29.7.0"
   }
