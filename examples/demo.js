@@ -1,4 +1,4 @@
-import { WorkoutTracker } from "../src/index.js"; 
+import { WorkoutTracker } from "../src/index.js";
 
 const wt = new WorkoutTracker();
 
@@ -17,12 +17,24 @@ wt.addStrengthSet("w1", "Squat", { reps: 5, weightKg: 100 });
 wt.addStrengthSet("w1", "Squat", { reps: 3, weightKg: 110 });
 
 // w2: endurance (two sets to show aggregation)
-wt.addEnduranceSet("w2", "Easy Run", { distanceKm: 5, minutes: 28, seconds: 30 });
-wt.addEnduranceSet("w2", "Easy Run", { distanceKm: 2, minutes: 11, seconds: 0 });
+wt.addEnduranceSet("w2", "Easy Run", {
+  distanceKm: 5,
+  minutes: 28,
+  seconds: 30,
+});
+wt.addEnduranceSet("w2", "Easy Run", {
+  distanceKm: 2,
+  minutes: 11,
+  seconds: 0,
+});
 
 // w3: mixed
 wt.addStrengthSet("w3", "Deadlift", { reps: 3, weightKg: 120 });
-wt.addEnduranceSet("w3", "Tempo Run", { distanceKm: 3, minutes: 14, seconds: 45 });
+wt.addEnduranceSet("w3", "Tempo Run", {
+  distanceKm: 3,
+  minutes: 14,
+  seconds: 45,
+});
 
 // --- Small helpers ---------------------------------------------------------
 const section = (title) => console.log(`\n=== ${title} ===`);
