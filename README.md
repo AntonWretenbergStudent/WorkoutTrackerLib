@@ -24,10 +24,7 @@ Install directly from npm:
 ```bash
 npm install workouttrackerlib
 ```
-Or with yarn:
-```bash
-npm install workouttrackerlib
-```
+
 Your project must be using ES Modules - either name your file **.mjs** or add **"type": "module"** to your **package.json**.
 
 ---

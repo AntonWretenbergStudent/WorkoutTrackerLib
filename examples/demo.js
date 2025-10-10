@@ -77,3 +77,31 @@ console.log("ending 2025-09-20:", wt.streak("2025-09-20"));
 console.log("ending 2025-09-21:", wt.streak("2025-09-21"));
 
 console.log("\n✅ Done.");
+
+/* import { WorkoutTracker } from "workouttrackerlib";
+
+const wt = new WorkoutTracker();
+
+// Add a workout
+wt.addWorkout({ id: "w1", date: "2025-09-20", type: "strength" });
+
+// Add an exercise and sets
+wt.addExercise("w1", "Bench Press");
+
+
+wt.addStrengthSet("w1", "Bench Press", { reps: 5, weightKg: 80 });
+
+console.log('-------Display Workout-------')
+console.log(wt.displayWorkout("w1"))
+
+console.log('------Weekly Summary------')
+console.log(wt.weeklySummary("2025-09-20"))
+
+console.log('------Personal Records-------')
+console.log(wt.personalRecords())
+
+console.log('-------Streaks-------')
+console.log(`You have a streak of ${wt.streak("2025-09-20")} days!`)
+
+console.log('-------Workout Stats-------')
+console.log(wt.workoutStats("w1")); */

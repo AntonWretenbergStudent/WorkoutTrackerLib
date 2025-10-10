@@ -1,27 +1,45 @@
 # Reflection
 
-## Naming (Chapter 2)
-| Name            | Explanation | Reflection |
-|-----------------|-------------|------------|
-| WorkoutTracker  | Main class  | The name shows clearly that the class tracks workouts. If it was only “Tracker”, it would be less clear. |
-| addWorkout      | Public method | Starts with a verb (“add”), so it is clear that this method changes the state. |
-| weeklySummary   | Public method | The name says exactly what it does: gives a summary for the week. Could also be `getWeeklySummary` for even clearer style. |
-| fmtMinutes      | Helper function | The short form `fmt` is not clear for everyone. A longer name like `formatMinutes` would be easier to understand. |
-| personalRecords | Public method | Uses training language (“personal records”). This makes sense for users in this domain and is better than a vague name like `bestValues`. |
+# Reflection – Chapter 2: Meaningful Names
 
-### Chapter 2 Reflection
-I often use good domain names (Workout, Endurance, Strength). This makes the code easier to understand. A weakness is that I sometimes use short forms like `fmtMinutes`, which are less clear. Next time, I will try to use full names so no extra explanation is needed.
+## Naming
+
+| Name | Explanation | Reflection |
+|------|--------------|-------------|
+| **WorkoutTracker** | Main class | A very clear **Intention-Revealing Name**. It tells exactly what the class does — tracks workouts. This follows the *Clean Code* rule that a name should show **why** it exists and **what** it does. |
+| **addWorkout** | Public method | Follows the rule that **Method Names** should start with a **verb**. It clearly says it adds something. Simple and easy to understand. |
+| **weeklySummary** | Public method | Uses **domain language** (“weekly”), which is great. It fits with *Clean Code’s* advice to use **Problem Domain Names**. Still, `getWeeklySummary` could be a bit clearer and more consistent with other getter methods. |
+| **fmtMinutes** | Helper function | Breaks the rule **Use Pronounceable Names**. “fmt” is short but not easy to say or understand. A full name like `formatMinutes` would be clearer for new readers. |
+| **personalRecords** | Public method | Very good **Domain-Specific Name**. It’s clear to anyone in the fitness context. It also adds **Meaningful Context**, which *Clean Code* recommends over generic names like `bestValues`. |
 
 ---
 
-## Functions (Chapter 3)
-| Method         | Lines | Reflection |
-|----------------|-------|------------|
-| workoutStats   | ~30   | Now uses one loop for both strength and endurance. Easier to follow, but still does a lot. |
-| weeklySummary  | ~30   | Reuses helpers and `workoutStats`. Less duplication, clearer purpose. |
-| displayWorkout | ~25   | Mixes data and text formatting. Still simple, but could be split into smaller parts. |
-| personalRecords| ~20   | Uses three loops, but does one clear thing: finds best 1RM. Easy to read. |
-| streak         | ~15   | Very simple and only does one thing. |
+## Chapter 2 Reflection
+
+In my code, I used many **Intention-Revealing Names** like `Workout`, `Exercise`, and `EnduranceSet`. These names make it easy to see what the code does without needing comments.  
+
+Sometimes I use short names like `fmtMinutes`, which goes against the **Use Pronounceable Names** rule. It’s faster to type, but not as readable. I’ll try to use full words next time.  
+
+I also avoided **Disinformation**, meaning I didn’t use names that could confuse readers. For example, I didn’t write `workoutList` when it’s actually a `Map`. Just calling it `workouts` is cleaner and safer if the structure changes later.  
+
+Next time, I’ll try to be more consistent with the **One Word per Concept** rule — for example, always using `add` (not mixing with `create`) when adding data. I’ll also remember that **clarity is more important than being clever**, so I’ll keep avoiding names like `PRFinder` and instead use something clear like `calculatePersonalRecords`.
+
+
+---
+
+# Reflection – Chapter 3: Functions
+
+
+| Function | What it does | Reflection |
+|---|---|---|
+| **workoutStats** | Collects and calculates both strength and endurance data | Rewritten to use **one loop** instead of two, which removes duplication and follows the **DRY** rule. It still mixes different levels (calculations, formatting, and data gathering). Splitting it into smaller helpers like `accumulateStrength` and `accumulateEndurance` would make it follow **Do One Thing** and **One Level of Abstraction per Function**. |
+| **weeklySummary** | Builds a summary of all workouts within one week | This function is short and clear. It reuses helpers like `workoutStats`, which makes it easy to read and fits the **Stepdown Rule** — the code tells a top-down story: “get workouts, summarize them, return results.” |
+| **displayWorkout** | Creates a printable string version of a workout | It’s easy to follow but mixes logic and text output. According to **Clean Code**, this breaks **One Level of Abstraction**. It would be better to extract the text parts into helpers like `formatStrengthSet()` and `formatEnduranceSet()`. |
+| **personalRecords** | Finds the best one-rep max (1RM) for each exercise | A good example of **Do One Thing** and **Command–Query Separation**. It only calculates and returns data, without changing any state. Clear and easy to test. |
+| **streak** | Counts how many days in a row a user trained | Simple and focused — it follows both **Small!** and **Do One Thing** perfectly. |
+
+---
+
 
 ### Example: Refactor to “do one thing”
 
@@ -54,14 +72,21 @@ for (const set of exercise.sets) {
 }
 ```
 
-**Why:** One pass is simpler and avoids duplication. This supports *Clean Code* chapter 3 — functions should “do one thing” and not repeat work.
+## Chapter 3 Reflection
 
----
+This chapter taught me that good functions are like short sentences — they should do **one thing**, be **small**, and use **clear names**.  
+When I first wrote my functions, some were long and handled too many details. After reading *Clean Code*, I started to break them into smaller parts and think about **levels of abstraction**.  
 
-### Chapter 3 Reflection
-My longest functions (`workoutStats`, `weeklySummary`) used to do too much. By combining loops and adding private helpers, the code is now easier to read. Input validation also makes the public methods safer. It is still a challenge to balance between splitting into many small parts and keeping code short.
+For example, `workoutStats` used to have two loops doing almost the same work. Now it only loops once, which follows **Don’t Repeat Yourself (DRY)** and makes it easier to understand. I also made sure that `weeklySummary` only organizes logic while helpers do the real calculations — this follows the **Stepdown Rule** that says code should read from high to low level like a story.
+
+I learned that each function should either **do something** or **answer something** never both. This is **Command–Query Separation (CQS)**, and I applied it to my module.
+
+I also learnd much about **naming**. Short names like `fmtMinutes` work but are not very clear. *Clean Code* recommends **Use Descriptive Names**, so I now prefer full names like `formatMinutes`. Long names are fine if they make the code easy to understand.
+
+Finally, I understand that **side effects** make code confusing. Each function should keep its promises if it says “get stats,” it should only do that and not also change data. I’ve kept my public methods free from hidden changes, which matches the **Have No Side Effects** rule.
 
 ---
 
 ## Personal Reflection
-Adding JSDoc makes the code easier to understand for other developers. Private methods reduce repeated code. Input validation helps avoid mistakes. I still sometimes use short names that are not clear. Next time I will aim for more consistent names and functions that only do one thing.
+
+After working through this chapter, I see that clear and small functions make everything easier reading, debugging, and testing. And I would now say that i think more like an editor: first write the logic, then clean it up by removing duplication, shortening long parts and renaming unclear functions. In the feature i will definitely think way more about functions and naming!

@@ -11,21 +11,19 @@
 ---
 
 ## Test Cases (Jest)
-
-| What was tested | How | Result |
-|-----------------|-----|--------|
-| Add workout + strength set | Created with id of`w1` with Bench Press 5×80 → `workoutStats("w1")` | ✅ Returned `strengthVolumeKg = 400`, `endurance = null` |
-| Add endurance set | Created with id of`w2` with 5 km in 25:00 → `workoutStats("w2")` | ✅ Returned `distanceKm = 5`, `durationMin = 25`, `paceMinPerKm ≈ 5.0` |
+![Picture of the jest test output from the terminal](../images/Jest-test-output.png)
 
 ---
 
 ## Manual Checks (demo app)
+The manual test can be found in examples/demo.js, starting at line 81.
+Above that, there are several manual tests that check multiple days at once. Including all of them here would be too much, so if you want a more detailed view, please look there for the full examples.
 
-- `displayWorkout(id)` prints sets and times in a readable format.  
-- `weeklySummary(YYYY-MM-DD)` only counts workouts from that week.  
-- `personalRecords()` shows the best 1RM for each exercise.  
-- `streak(untilDateIso)` counts correct consecutive days.  
-- Input validation works: errors are thrown for invalid values (like empty exercise name or reps ≤ 0).  
+Below, we show some of the main methods that you can use in your own tests or applications.
+![Picture of the jest test output from the terminal](../images/Manual-test-demo.png)
+
+Here is the output from the test
+ ![Picture of the jest test output from the terminal](../images/Manual-test-output-from-terminal.png)
 
 ---
 
